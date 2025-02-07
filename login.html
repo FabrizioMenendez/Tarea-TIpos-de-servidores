@@ -1,0 +1,107 @@
+<!-- Homepage (index.html) -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+</head>
+<body>
+    <h1>Bienvenido</h1>
+    <button onclick="location.href='login.html'">Ir al Login</button>
+</body>
+</html>
+
+<!-- Login (login.html) -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <h1>Iniciar Sesión</h1>
+    <input type="text" id="username" placeholder="Usuario">
+    <input type="password" id="password" placeholder="Contraseña">
+    <button onclick="login()">Ingresar</button>
+    <button onclick="location.href='register.html'">Registrar</button>
+    <p id="error-msg" style="color:red;"></p>
+
+    <script>
+        function login() {
+            let username = document.getElementById('username').value;
+            let password = document.getElementById('password').value;
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            let user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                localStorage.setItem('loggedInUser', username);
+                location.href = 'dashboard.html';
+            } else {
+                document.getElementById('error-msg').innerText = 'Usuario o contraseña incorrectos';
+            }
+        }
+    </script>
+</body>
+</html>
+
+<!-- Registro (register.html) -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+</head>
+<body>
+    <h1>Registrar Usuario</h1>
+    <input type="text" id="new-username" placeholder="Nuevo Usuario">
+    <input type="password" id="new-password" placeholder="Nueva Contraseña">
+    <button onclick="register()">Registrar</button>
+    <button onclick="location.href='login.html'">Volver al Login</button>
+    <p id="register-msg" style="color:green;"></p>
+    
+    <script>
+        function register() {
+            let username = document.getElementById('new-username').value;
+            let password = document.getElementById('new-password').value;
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            
+            if (users.some(u => u.username === username)) {
+                document.getElementById('register-msg').innerText = 'El usuario ya existe';
+                return;
+            }
+            
+            users.push({ username, password });
+            localStorage.setItem('users', JSON.stringify(users));
+            document.getElementById('register-msg').innerText = 'Usuario registrado con éxito';
+        }
+    </script>
+</body>
+</html>
+
+<!-- Dashboard (dashboard.html) -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Bienvenido al Dashboard</h1>
+    <button onclick="logout()">Cerrar Sesión</button>
+    
+    <script>
+        if (!localStorage.getItem('loggedInUser')) {
+            location.href = 'login.html';
+        }
+
+        function logout() {
+            localStorage.removeItem('loggedInUser');
+            location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
